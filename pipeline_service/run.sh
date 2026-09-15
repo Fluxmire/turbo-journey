@@ -16,6 +16,9 @@ ulimit -n "$(ulimit -Hn)" 2>/dev/null || ulimit -n 65536 2>/dev/null || true
 # nothing on 20-40 CPU quotas. Inherited by every vLLM server spawned from llm/spawn.py.
 export OMP_NUM_THREADS="${OMP_NUM_THREADS:-1}"
 
+# First boot downloads + loads ChonkyCat (~55GB) + DFlash draft + GLM; default 600s is often too short.
+export VLLM_ENGINE_READY_TIMEOUT_S="${VLLM_ENGINE_READY_TIMEOUT_S:-1800}"
+
 # Preflight: network, GPU count, per-GPU bf16 TFLOPS + decode-shaped weight-stream GB/s + power limit.
 # Writes /tmp/preflight_metrics.json (picked up by serve.py for the miner-diag header).
 if python -m modules.metrics.preflight; then
